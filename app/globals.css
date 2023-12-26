@@ -105,6 +105,10 @@
   }
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .test {
   /* primary-foreground */
   color: hsl(210 40% 98%);

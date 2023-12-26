@@ -4,31 +4,14 @@ import { MagicCard } from "@/components/card/MagicCard";
 import { WavePercent } from "@/components/percent/WavePercent";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LineBarChart } from "@/components/chart/LineBarChart";
+import { AreaBarChart } from "@/components/chart/AreaBarChart";
 
 const WorkOrderPage = () => {
   const [boardData, setBoardData] = useState<any>(null);
-  const [chartData, setChartData] = useState<any>({
-    labels: [],
-    datasets: [
-      {
-        label: "总完成数量",
-        data: [],
-        borderColor: "rgba(59, 130, 246,0.7)",
-        backgroundColor: "rgba(59, 130, 246,0.7)",
-        borderRadius: 24,
-        type: "bar",
-        barThickness: 30,
-      },
-      {
-        label: "总排产数量",
-        data: [],
-        tension: 0.4,
-        borderColor: "rgba(59, 130, 246)",
-        backgroundColor: "rgba(59, 130, 246)",
-      },
-    ],
-  });
+  const [chartData, setChartData] = useState<any>([
+    { date: 0, qutstanding: 0, completed: 0 },
+    { date: 0, qutstanding: 0, completed: 0 },
+  ]);
   const showingBoard = useRef<number>(1);
 
   const getChartData = async () => {
@@ -41,21 +24,29 @@ const WorkOrderPage = () => {
 
     if (!res) return;
 
-    console.log(res);
-
     const { data } = await res.json();
 
-    console.log(data);
-
     const result = data.reduce((a: any, b: any) => {
-      if (!a[b.date]) {
-        a[b.date] = [];
+      if (!a[b.type]) {
+        a[b.type] = {};
       }
-      a[b.date].push(b);
+      if (!a[b.type][b.date]) {
+        a[b.type][b.date] = { date: b.date, completed: 0, qutstanding: 0 };
+      }
+      a[b.type][b.date].completed += b.completed;
+      a[b.type][b.date].qutstanding += b.qutstanding;
       return a;
     }, {});
 
     console.log(result);
+    // 将对象转换为数组
+    for (let type in result) {
+      result[type] = Object.values(result[type]);
+    }
+
+    console.log(result);
+
+    setChartData(result);
   };
 
   const getBoardData = async () => {
@@ -116,7 +107,7 @@ const WorkOrderPage = () => {
       } else {
         showingBoard.current++;
       }
-    }, 3000000);
+    }, 60000);
 
     // 清除定时器
     return () => {
@@ -135,7 +126,7 @@ const WorkOrderPage = () => {
           transition={{ duration: 1 }}
         >
           {showingBoard.current === 1 ? (
-            <div className="w-full h-full">
+            <div className="w-full h-full ">
               <div className="grid grid-cols-3 justify-items-center items-center mt-[4vh]">
                 <MagicCard className="w-[24vw] h-[33vh]">
                   <div className="w-full h-full text-center">
@@ -213,15 +204,22 @@ const WorkOrderPage = () => {
                 </MagicCard>
               </div>
 
-              <div className="h-[60vh] rounded">
-                <div className=""></div>
-                <LineBarChart />
+              <div className="flex justify-center mt-16">
+                <div className="w-[91vw] ">
+                  <MagicCard className="h-[54vh] before:w-[101%] before:h-[103%]">
+                    <div className="text-4xl font-medium text-slate-300 text-center mt-6 w-full">
+                      机加工站近一个月生产趋势图
+                    </div>
+
+                    <AreaBarChart data={chartData["机加工"]} />
+                  </MagicCard>
+                </div>
               </div>
             </div>
           ) : showingBoard.current === 2 ? (
-            <div className="w-full h-full">
+            <div className="w-full h-full ">
               <div className="grid grid-cols-4 justify-items-center items-center mt-[4vh]">
-                <MagicCard className="w-[20vw] h-[35vh]">
+                <MagicCard className="w-[20vw] h-[32vh]">
                   <div className="w-full h-full text-center">
                     <div className="text-4xl mt-4 text-slate-300">
                       电气装配工站
@@ -248,7 +246,7 @@ const WorkOrderPage = () => {
                   </div>
                 </MagicCard>
 
-                <MagicCard className="w-[20vw] h-[35vh]">
+                <MagicCard className="w-[20vw] h-[32vh]">
                   <div className="w-full h-full text-center">
                     <div className="text-4xl mt-4 text-slate-300">
                       单机装配工站
@@ -275,7 +273,7 @@ const WorkOrderPage = () => {
                   </div>
                 </MagicCard>
 
-                <MagicCard className="w-[20vw] h-[35vh]">
+                <MagicCard className="w-[20vw] h-[32vh]">
                   <div className="w-full h-full text-center">
                     <div className="text-4xl mt-4 text-slate-300">
                       成套装配工站
@@ -302,7 +300,7 @@ const WorkOrderPage = () => {
                   </div>
                 </MagicCard>
 
-                <MagicCard className="w-[20vw] h-[35vh]">
+                <MagicCard className="w-[20vw] h-[32vh]">
                   <div className="w-full h-full text-center">
                     <div className="text-4xl mt-4 text-slate-300">
                       成品发货工站
@@ -329,9 +327,21 @@ const WorkOrderPage = () => {
                   </div>
                 </MagicCard>
               </div>
+
+              <div className="flex justify-center mt-12">
+                <div className="w-[94vw] ">
+                  <MagicCard className="h-[56vh] before:w-[101%] before:h-[103%]">
+                    <div className="text-4xl font-medium text-slate-300 text-center mt-6 w-full">
+                      装配工站近一个月生产趋势图
+                    </div>
+
+                    <AreaBarChart data={chartData["装配"]} />
+                  </MagicCard>
+                </div>
+              </div>
             </div>
           ) : showingBoard.current === 3 ? (
-            <div className="w-full h-full">
+            <div className="w-full h-full ">
               <div className="grid grid-cols-3 justify-items-center items-center mt-[4vh]">
                 <MagicCard className="w-[24vw] h-[33vh]">
                   <div className="w-full h-full text-center">
@@ -407,6 +417,18 @@ const WorkOrderPage = () => {
                     </div>
                   </div>
                 </MagicCard>
+              </div>
+
+              <div className="flex justify-center mt-16">
+                <div className="w-[91vw] ">
+                  <MagicCard className="h-[54vh] before:w-[101%] before:h-[103%]">
+                    <div className="text-4xl font-medium text-slate-300 text-center mt-6 w-full">
+                      机加工站近一个月生产趋势图
+                    </div>
+
+                    <AreaBarChart data={chartData["机加工"]} />
+                  </MagicCard>
+                </div>
               </div>
             </div>
           ) : (
@@ -492,6 +514,18 @@ const WorkOrderPage = () => {
                     </div>
                   </div>
                 </MagicCard>
+              </div>
+
+              <div className="flex justify-center mt-16">
+                <div className="w-[91vw] ">
+                  <MagicCard className="h-[54vh] before:w-[101%] before:h-[103%]">
+                    <div className="text-4xl font-medium text-slate-300 text-center mt-6 w-full">
+                      其他工站近一个月生产趋势图
+                    </div>
+
+                    <AreaBarChart data={chartData["其他"]} />
+                  </MagicCard>
+                </div>
               </div>
             </div>
           )}
