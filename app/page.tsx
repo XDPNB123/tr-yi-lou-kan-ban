@@ -1,7 +1,10 @@
 import { Button } from "@/components/button/Button";
-import ClipboardDocumentListIcon from "@heroicons/react/24/outline/ClipboardDocumentListIcon";
-import ClockIcon from "@heroicons/react/24/outline/ClockIcon";
-import WrenchScrewdriverIcon from "@heroicons/react/24/outline/WrenchScrewdriverIcon";
+import {
+  InboxArrowDownIcon,
+  InformationCircleIcon,
+  ScaleIcon,
+  WrenchScrewdriverIcon,
+} from "@heroicons/react/24/outline";
 
 import Link from "next/link";
 
@@ -9,26 +12,33 @@ export default function Home() {
   return (
     <div className=" h-screen  flex justify-center items-center text-center">
       <div>
-        <div className="text-9xl font-bold ">同日 MES 看板系统</div>
+        <div className="text-9xl font-bold">同日 MES 看板</div>
         <div className="mt-32">
-          <Link href="/work-order">
+          <Link href="/ji-jia-gong">
             <Button size="lg" className="mx-3">
-              <ClipboardDocumentListIcon className="w-6 h-6 mr-3" />
-              工单看板
+              <WrenchScrewdriverIcon className="w-6 h-6 mr-4" />
+              机加类型看板
             </Button>
           </Link>
 
-          <Link href="/work-order">
+          <Link href="/ban-jin">
             <Button size="lg" className="mx-3">
-              <ClockIcon className="w-6 h-6 mr-3" />
-              工时看板
+              <ScaleIcon className="w-6 h-6 mr-4" />
+              钣金类型看板
             </Button>
           </Link>
 
-          <Link href="/work-order">
+          <Link href="/zhuang-pei">
             <Button size="lg" className="mx-3">
-              <ClockIcon className="w-6 h-6 mr-3" />
-              状态看板
+              <InboxArrowDownIcon className="w-6 h-6 mr-4" />
+              装配类型看板
+            </Button>
+          </Link>
+
+          <Link href="/qi-ta">
+            <Button size="lg" className="mx-3">
+              <InformationCircleIcon className="w-6 h-6 mr-4" />
+              其他类型看板
             </Button>
           </Link>
         </div>

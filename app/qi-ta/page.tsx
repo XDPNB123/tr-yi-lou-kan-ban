@@ -136,13 +136,13 @@ const QiTaPage = () => {
                     </div>
                     <div className="text-2xl flex w-full px-6 justify-between absolute bottom-4">
                       <span className=" text-slate-300">
-                        总生产数量：
+                        已生产工单数：
                         <span className="text-green-300">
                           {cardData?.["其他"]?.[index]?.completed}
                         </span>
                       </span>
                       <span className="text-slate-300">
-                        总排产数量：
+                        已排产工单数：
                         <span className="text-red-300">
                           {cardData?.["其他"]?.[index]?.qutstanding}
                         </span>
@@ -159,7 +159,7 @@ const QiTaPage = () => {
           <div className="w-[91vw]">
             <MagicCard className="h-[54vh] before:w-[101%] before:h-[103%]">
               <div className="text-4xl font-medium text-slate-300 text-center mt-6 w-full">
-                其他类型工站近一个月生产趋势图
+                【其他】类型工站近一个月生产趋势图
               </div>
 
               <AreaBarChart data={chartData["其他"]} />
